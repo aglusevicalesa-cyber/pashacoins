@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>PashaCoin Game</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 40px;
+    }
+    .tab-buttons {
+      margin-bottom: 20px;
+    }
+    .tab-buttons button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .tab {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    #coinButton {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      border: none;
+      background: gold;
+      color: black;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    }
+    #counter {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+    #gain {
+      font-size: 18px;
+      color: lime;
+      margin-top: 5px;
+      height: 20px;
+    }
+    .upgrade {
+      margin: 10px 0;
+    }
+    a {
+      display: block;
+      margin-top: 40px;
+      color: cyan;
+      text-decoration: none;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>PashaCoin 💰</h1>
+
+  <!-- Вкладки -->
+  <div class="tab-buttons">
+    <button onclick="openTab('game')">Игра</button>
+    <button onclick="openTab('upgrades')">Прокачка</button>
+    <button onclick="openTab('ref')">Рефералы</button>
+  </div>
+
+  <!-- Игра -->
+  <div id="game" class="tab active">
+    <button id="coinButton">PashaCoin</button>
+    <div id="counter">0</div>
+    <div id="gain"></div>
+    <a href="https://t.me/pleshsup" target="_blank">@pleshsup</a>
+  </div>
+
+  <!-- Прокачка -->
+  <div id="upgrades" class="tab">
+    <h2>Магазин прокачки</h2>
+    <div class="upgrade">
+      <button onclick="buyUpgrade('multiplier', 100, 2)">x2 клики (100 PashaCoin)</button>
+    </div>
+    <div class="upgrade">
+      <button onclick="buyUpgrade('multiplier', 1000, 5)">x5 клики (1000 PashaCoin)</button>
+    </div>
+  </div>
+
+  <!-- Рефералы -->
+  <div id="ref" class="tab">
+    <h2>Реферальная система</h2>
+    <p>Приглашай друзей по ссылке:</p>
+    <input type="text" id="refLink" readonly style="width:90%; text-align:center;">
+    <p>За каждого друга ты получаешь <b>1000 PashaCoin</b>!</p>
+  </div>
+
+  <script>
+    // Загружаем сохранение
+    let coins = parseInt(localStorage.getItem("coins") || "0");
+    let multiplier = parseInt(localStorage.getItem("multiplier") || "1");
+
+    const counter = document.getElementById("counter");
+    const gain = document.getElementById("gain");
+    const button = document.getElementById("coinButton");
+
+    // Обновление счётчика
+    function updateCounter() {
+      counter.textContent = coins + " PashaCoin";
+      localStorage.setItem("coins", coins);
+      localStorage.setItem("multiplier", multiplier);
+    }
+
+    // Клик по кнопке
+    button.addEventListener("click", () => {
+      coins += multiplier;
+      updateCounter();
+      gain.textContent = "+" + multiplier + " PashaCoin";
+      setTimeout(() => { gain.textContent = ""; }, 800);
+    });
+
+    // Покупка апгрейда
+    function buyUpgrade(type, cost, value) {
+      if (coins >= cost) {
+        coins -= cost;
+        if (type === "multiplier") multiplier = value;
+        updateCounter();
+        alert("Успешная покупка!");
+      } else {
+        alert("Недостаточно PashaCoin!");
+      }
+    }
+
+    // Вкладки
+    function openTab(id) {
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+    }
+
+    // Реферальная система
+    const refLink = document.getElementById("refLink");
+    const username = "pleshsup"; // твой @
+    const url = window.location.origin + window.location.pathname + "?ref=" + username;
+    refLink.value = url;
+
+    // Проверка ссылки с ?ref=
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("ref")) {
+      const refUser = params.get("ref");
+      if (!localStorage.getItem("refClaimed")) {
+        coins += 1000;
+        localStorage.setItem("refClaimed", "true");
+        alert("Ты получил бонус 1000 PashaCoin за приглашение от @" + refUser);
+      }
+    }
+
+    // Первое обновление
+    updateCounter();
+  </script>
+
+</body>
+</html>
