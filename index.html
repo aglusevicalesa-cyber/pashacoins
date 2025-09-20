@@ -2,164 +2,175 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>PashaCoin Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PashaCoin Clicker</title>
   <style>
     body {
-      background: #111;
-      color: white;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a40, #3d3da6);
+      color: #fff;
       text-align: center;
-      padding-top: 40px;
+      margin: 0;
+      padding: 0;
     }
-    .tab-buttons {
-      margin-bottom: 20px;
-    }
-    .tab-buttons button {
-      margin: 0 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .tab {
-      display: none;
-    }
-    .active {
-      display: block;
-    }
-    #coinButton {
-      width: 220px;
-      height: 220px;
-      border-radius: 50%;
-      border: none;
-      background: gold;
-      color: black;
+
+    header {
+      padding: 20px;
       font-size: 28px;
       font-weight: bold;
+    }
+
+    .counter {
+      font-size: 26px;
+      margin: 20px 0;
+    }
+
+    .click-btn {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: none;
+      background: radial-gradient(circle at 30% 30%, #ffd700, #c99700);
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+      font-size: 22px;
+      font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+      transition: transform 0.15s ease;
     }
-    #counter {
-      font-size: 24px;
-      margin-top: 20px;
+
+    .click-btn:active {
+      transform: scale(0.9);
     }
-    #gain {
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin-top: 25px;
+      border-bottom: 2px solid #444;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
       font-size: 18px;
-      color: lime;
-      margin-top: 5px;
-      height: 20px;
+      transition: background 0.2s;
     }
-    .upgrade {
-      margin: 10px 0;
+
+    .tab.active {
+      border-bottom: 3px solid #ffd700;
+      font-weight: bold;
     }
-    a {
+
+    .content {
+      display: none;
+      padding: 20px;
+    }
+
+    .content.active {
       display: block;
-      margin-top: 40px;
-      color: cyan;
-      text-decoration: none;
-      font-size: 20px;
+    }
+
+    .upgrade-btn {
+      margin: 10px;
+      padding: 12px 18px;
+      background: #2e2e6a;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .upgrade-btn:hover {
+      background: #4141a1;
+    }
+
+    input.ref-link {
+      width: 80%;
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      margin-top: 10px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
+  <header>PashaCoin Clicker 💰</header>
 
-  <h1>PashaCoin 💰</h1>
+  <div class="counter">У тебя <span id="coins">0</span> PashaCoin</div>
+  <button class="click-btn" onclick="clickCoin()">+ PashaCoin</button>
 
   <!-- Вкладки -->
-  <div class="tab-buttons">
-    <button onclick="openTab('game')">Игра</button>
-    <button onclick="openTab('upgrades')">Прокачка</button>
-    <button onclick="openTab('ref')">Рефералы</button>
+  <div class="tabs">
+    <div class="tab active" onclick="openTab('game')">Игра</div>
+    <div class="tab" onclick="openTab('upgrades')">Прокачка</div>
+    <div class="tab" onclick="openTab('ref')">Рефералы</div>
   </div>
 
-  <!-- Игра -->
-  <div id="game" class="tab active">
-    <button id="coinButton">PashaCoin</button>
-    <div id="counter">0</div>
-    <div id="gain"></div>
-    <a href="https://t.me/pleshsup" target="_blank">@pleshsup</a>
+  <!-- Контент вкладок -->
+  <div id="game" class="content active">
+    <p>Тапай по кнопке, чтобы зарабатывать PashaCoin 🤑</p>
   </div>
 
-  <!-- Прокачка -->
-  <div id="upgrades" class="tab">
-    <h2>Магазин прокачки</h2>
-    <div class="upgrade">
-      <button onclick="buyUpgrade('multiplier', 100, 2)">x2 клики (100 PashaCoin)</button>
-    </div>
-    <div class="upgrade">
-      <button onclick="buyUpgrade('multiplier', 1000, 5)">x5 клики (1000 PashaCoin)</button>
-    </div>
+  <div id="upgrades" class="content">
+    <h2>Прокачка</h2>
+    <button class="upgrade-btn" onclick="buyUpgrade(100, 2)">x2 за 100 PashaCoin</button>
+    <button class="upgrade-btn" onclick="buyUpgrade(500, 5)">x5 за 500 PashaCoin</button>
+    <button class="upgrade-btn" onclick="buyUpgrade(2000, 10)">x10 за 2000 PashaCoin</button>
   </div>
 
-  <!-- Рефералы -->
-  <div id="ref" class="tab">
+  <div id="ref" class="content">
     <h2>Реферальная система</h2>
-    <p>Приглашай друзей по ссылке:</p>
-    <input type="text" id="refLink" readonly style="width:90%; text-align:center;">
-    <p>За каждого друга ты получаешь <b>1000 PashaCoin</b>!</p>
+    <p>Пригласи друга и получи бонус 1000 PashaCoin 🎁</p>
+    <input type="text" id="refLink" class="ref-link" readonly>
   </div>
 
   <script>
-    // Загружаем сохранение
-    let coins = parseInt(localStorage.getItem("coins") || "0");
-    let multiplier = parseInt(localStorage.getItem("multiplier") || "1");
+    let coins = 0;
+    let multiplier = 1;
 
-    const counter = document.getElementById("counter");
-    const gain = document.getElementById("gain");
-    const button = document.getElementById("coinButton");
-
-    // Обновление счётчика
-    function updateCounter() {
-      counter.textContent = coins + " PashaCoin";
-      localStorage.setItem("coins", coins);
-      localStorage.setItem("multiplier", multiplier);
+    function clickCoin() {
+      coins += multiplier;
+      document.getElementById("coins").textContent = coins;
     }
 
-    // Клик по кнопке
-    button.addEventListener("click", () => {
-      coins += multiplier;
-      updateCounter();
-      gain.textContent = "+" + multiplier + " PashaCoin";
-      setTimeout(() => { gain.textContent = ""; }, 800);
-    });
-
-    // Покупка апгрейда
-    function buyUpgrade(type, cost, value) {
+    function buyUpgrade(cost, value) {
       if (coins >= cost) {
         coins -= cost;
-        if (type === "multiplier") multiplier = value;
-        updateCounter();
-        alert("Успешная покупка!");
+        multiplier = value;
+        alert("Теперь каждый клик даёт x" + multiplier + " PashaCoin!");
+        document.getElementById("coins").textContent = coins;
       } else {
-        alert("Недостаточно PashaCoin!");
+        alert("Не хватает монет 😢");
       }
     }
 
-    // Вкладки
-    function openTab(id) {
+    function openTab(tabId) {
       document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-      document.getElementById(id).classList.add("active");
+      document.querySelectorAll(".content").forEach(c => c.classList.remove("active"));
+
+      document.querySelector(".tab[onclick*='" + tabId + "']").classList.add("active");
+      document.getElementById(tabId).classList.add("active");
     }
 
-    // Реферальная система
-    const refLink = document.getElementById("refLink");
+    // Генерация реферальной ссылки
     const username = "pleshsup"; // твой @
+    const refLink = document.getElementById("refLink");
     const url = window.location.origin + window.location.pathname + "?ref=" + username;
     refLink.value = url;
 
-    // Проверка ссылки с ?ref=
+    // Проверка рефералки
     const params = new URLSearchParams(window.location.search);
     if (params.has("ref")) {
-      const refUser = params.get("ref");
       if (!localStorage.getItem("refClaimed")) {
         coins += 1000;
         localStorage.setItem("refClaimed", "true");
-        alert("Ты получил бонус 1000 PashaCoin за приглашение от @" + refUser);
+        alert("Ты получил бонус 1000 PashaCoin за приглашение от @" + params.get("ref"));
+        document.getElementById("coins").textContent = coins;
       }
     }
-
-    // Первое обновление
-    updateCounter();
   </script>
-
 </body>
 </html>
